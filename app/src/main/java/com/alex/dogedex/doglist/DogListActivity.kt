@@ -42,24 +42,12 @@ class DogListActivity : AppCompatActivity() {
 
         dogListViewModel.status.observe(this){ status->
             when(status){
-                ApiResponseStatus.LOADING -> {
-                    //Mostrar progressBar
-                    loadingWheel.visibility = View.VISIBLE
-                }
-                ApiResponseStatus.ERROR -> {
-                    //Ocultar el progress
+                is ApiResponseStatus.Error -> {
                     loadingWheel.visibility = View.GONE
-                    Toast.makeText(this@DogListActivity, "Hubo un error al desgargar los datos", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DogListActivity, status.messageId, Toast.LENGTH_SHORT).show()
                 }
-                ApiResponseStatus.SUCCESS -> {
-                    //Ocultar el progress
-                    loadingWheel.visibility = View.GONE
-                }
-                else -> {
-                    //Ocultar el progress
-                    loadingWheel.visibility = View.GONE
-                    Toast.makeText(this@DogListActivity, "Estatus desconocido", Toast.LENGTH_SHORT).show()
-                }
+                is ApiResponseStatus.Loading -> loadingWheel.visibility = View.VISIBLE
+                is ApiResponseStatus.Success -> loadingWheel.visibility = View.GONE
             }
         }
 

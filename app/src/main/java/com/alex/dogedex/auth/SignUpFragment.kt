@@ -1,5 +1,6 @@
 package com.alex.dogedex.auth
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Patterns
 import androidx.fragment.app.Fragment
@@ -11,8 +12,25 @@ import com.alex.dogedex.databinding.FragmentSignUpBinding
 
 
 class SignUpFragment : Fragment() {
-
+    private lateinit var signUpFragmentActions: SignUpFragmentActions
     private lateinit var binding: FragmentSignUpBinding
+
+    interface SignUpFragmentActions {
+        fun onSignUpFieldsValidated(
+            email: String,
+            password: String,
+            passwordConfirmation: String
+        )
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        signUpFragmentActions = try {
+            context as SignUpFragmentActions
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must implement LoginFragmentActions")
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,6 +75,8 @@ class SignUpFragment : Fragment() {
             binding.passwordInput.error = getString(R.string.passwords_do_not_match)
             return
         }
+
+        signUpFragmentActions.onSignUpFieldsValidated(email, password, passwordConfirmation)
     }
 
     private fun isValidEmail(email: String?):Boolean{

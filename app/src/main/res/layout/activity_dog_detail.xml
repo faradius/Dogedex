@@ -6,7 +6,7 @@
 
         <variable
             name="dog"
-            type="com.alex.dogedex.Dog" />
+            type="com.alex.dogedex.model.Dog" />
     </data>
 
     <FrameLayout

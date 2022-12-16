@@ -57,6 +57,10 @@ class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, S
         findNavController(R.id.nav_host_fragment).navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
     }
 
+    override fun onLoginFieldsValidated(email: String, password: String) {
+        viewModel.login(email,password)
+    }
+
     override fun onSignUpFieldsValidated(
         email: String,
         password: String,

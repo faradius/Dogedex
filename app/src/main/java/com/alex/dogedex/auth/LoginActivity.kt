@@ -12,6 +12,7 @@ import com.alex.dogedex.MainActivity
 import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityLoginBinding
+import com.alex.dogedex.model.User
 
 class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, SignUpFragment.SignUpFragmentActions {
 
@@ -35,6 +36,7 @@ class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, S
 
         viewModel.user.observe(this){ user ->
             if (user != null){
+                User.setLoggedInUser(this, user)
                 startMainActivity()
             }
         }
@@ -42,6 +44,7 @@ class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, S
 
     private fun startMainActivity(){
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
     private fun showErrorDialog(messageId: Int){

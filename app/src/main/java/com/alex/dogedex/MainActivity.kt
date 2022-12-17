@@ -4,12 +4,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.alex.dogedex.auth.LoginActivity
+import com.alex.dogedex.databinding.ActivityMainBinding
 import com.alex.dogedex.model.User
+import com.alex.dogedex.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val user = User.getLoggedInUser(this)
         if (user == null){
@@ -17,6 +20,14 @@ class MainActivity : AppCompatActivity() {
             //Para que no haga mas de lo que haya abajo de esto
             return
         }
+
+        binding.settingsFab.setOnClickListener {
+            openSettingsActivity()
+        }
+    }
+
+    private fun openSettingsActivity() {
+        startActivity(Intent(this, SettingsActivity::class.java))
     }
 
     private fun openLoginActivity() {

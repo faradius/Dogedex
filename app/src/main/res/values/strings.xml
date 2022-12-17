@@ -28,4 +28,6 @@
     <string name="there_was_an_error">There was an error</string>
     <string name="wrong_user_or_password">Wrong user or password</string>
     <string name="short_password">Password needs at least 8 characters</string>
+    <string name="this_a_content_description">This a content description</string>
+    <string name="logout">logout</string>
 </resources>

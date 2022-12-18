@@ -33,7 +33,7 @@
             android:layout_marginBottom="16dp"
             android:layout_toStartOf="@+id/take_photo_fab"
             android:contentDescription="@string/this_a_content_description"
-            android:src="@drawable/ic_baseline_photo_camera" />
+            android:src="@drawable/ic_baseline_list" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/settings_fab"
@@ -46,7 +46,7 @@
             android:layout_marginBottom="16dp"
             android:layout_toEndOf="@+id/take_photo_fab"
             android:contentDescription="@string/this_a_content_description"
-            android:src="@drawable/ic_baseline_photo_camera" />
+            android:src="@drawable/ic_baseline_settings" />
 
     </RelativeLayout>
 </layout>

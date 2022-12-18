@@ -1,20 +1,28 @@
 package com.alex.dogedex.api
 
+import com.alex.dogedex.api.dto.AddDogToUserDTO
 import com.alex.dogedex.api.dto.LoginDTO
-import com.alex.dogedex.utils.BASE_URL
-import com.alex.dogedex.utils.GET_ALL_DOGS_URL
-import com.alex.dogedex.utils.SIGN_UP_URL
 import com.alex.dogedex.api.dto.SignUpDTO
 import com.alex.dogedex.api.responses.DogListApiResponse
 import com.alex.dogedex.api.responses.AuthApiResponse
-import com.alex.dogedex.utils.SIGN_IN_URL
+import com.alex.dogedex.api.responses.DefaultResponse
+import com.alex.dogedex.utils.*
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
+private val okHttpClient = OkHttpClient
+    .Builder()
+    .addInterceptor(ApiServiceInterceptor)
+    .build()
+
 private val retrofit = Retrofit.Builder()
+    .client(okHttpClient)
     .baseUrl(BASE_URL)
     .addConverterFactory(MoshiConverterFactory.create())
     .build()
@@ -28,6 +36,12 @@ interface ApiService{
 
     @POST(SIGN_IN_URL)
     suspend fun login(@Body loginDTO: LoginDTO): AuthApiResponse
+
+    //Un header es una forma de añadir mas información a una petición
+    @Headers("${ApiServiceInterceptor.NEEDS_AUTH_HEADER_KEY}: true")
+    @POST(ADD_DOG_TO_USER_URL)
+    suspend fun addDogToUser(@Body addDogToUserDTO: AddDogToUserDTO): DefaultResponse
+
 }
 
 object DogsApi{

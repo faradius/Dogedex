@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityDogListBinding
 import com.alex.dogedex.dogdetail.DogDetailActivity
@@ -37,6 +38,9 @@ class DogListActivity : AppCompatActivity() {
             intent.putExtra(DOG_KEY, it)
             startActivity(intent)
         }
+        adapter.setLongOnItemClickListener {
+            dogListViewModel.addDogToUser(it.id)
+        }
         rvDog.adapter = adapter
 
         dogListViewModel.dogList.observe(this){ dogList ->
@@ -51,6 +55,7 @@ class DogListActivity : AppCompatActivity() {
                 }
                 is ApiResponseStatus.Loading -> loadingWheel.visibility = View.VISIBLE
                 is ApiResponseStatus.Success -> loadingWheel.visibility = View.GONE
+                else -> {Toast.makeText(this@DogListActivity, R.string.unknown_error, Toast.LENGTH_SHORT).show()}
             }
         }
 

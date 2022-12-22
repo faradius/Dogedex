@@ -11,6 +11,8 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
@@ -20,19 +22,29 @@ import com.alex.dogedex.databinding.ActivityMainBinding
 import com.alex.dogedex.doglist.DogListActivity
 import com.alex.dogedex.model.User
 import com.alex.dogedex.settings.SettingsActivity
+import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var imageCapture: ImageCapture
+    private lateinit var cameraExecutor: ExecutorService
+    private var isCameraReady = false
 
-   private val requestPermissionLauncher =
+    private val requestPermissionLauncher =
         registerForActivityResult(
             ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
                 //Open Camera
-                startCamera()
+                setupCamera()
             } else {
-                Toast.makeText(this, "You need to accept camera permission to use camera", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "You need to accept camera permission to use camera",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
 
@@ -42,11 +54,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val user = User.getLoggedInUser(this)
-        if (user == null){
+        if (user == null) {
             openLoginActivity()
             //Para que no haga mas de lo que haya abajo de esto
             return
-        }else{
+        } else {
             ApiServiceInterceptor.setSessionToken(user.authenticationToken)
         }
 
@@ -58,7 +70,35 @@ class MainActivity : AppCompatActivity() {
             openDogListActivity()
         }
 
+        binding.takePhotoFab.setOnClickListener {
+            if (isCameraReady){
+                takePhoto()
+            }
+
+        }
+
         requestCameraPermission()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::cameraExecutor.isInitialized){
+            cameraExecutor.shutdown()
+        }
+
+    }
+
+    private fun setupCamera() {
+        //Con el post hace que se espere a que se ejecute la camara para poder
+        //proceder con el bloque de codigo que esta en su interior
+        binding.cameraPreview.post {
+            imageCapture = ImageCapture.Builder()
+                .setTargetRotation(binding.cameraPreview.display.rotation)
+                .build()
+            cameraExecutor = Executors.newSingleThreadExecutor()
+            startCamera()
+            isCameraReady = true
+        }
     }
 
     private fun requestCameraPermission() {
@@ -68,18 +108,18 @@ class MainActivity : AppCompatActivity() {
                     this,
                     Manifest.permission.CAMERA
                 ) == PackageManager.PERMISSION_GRANTED -> {
-                    startCamera()
+                    setupCamera()
                 }
                 shouldShowRequestPermissionRationale(Manifest.permission.CAMERA) -> {
                     AlertDialog.Builder(this)
                         .setTitle("Accept please")
                         .setMessage("It necesary these permissions, accept please")
-                        .setPositiveButton(android.R.string.ok){ _, _ ->
+                        .setPositiveButton(android.R.string.ok) { _, _ ->
                             requestPermissionLauncher.launch(
                                 Manifest.permission.CAMERA
                             )
                         }
-                        .setNegativeButton(android.R.string.cancel){ _, _ ->
+                        .setNegativeButton(android.R.string.cancel) { _, _ ->
 
                         }.show()
                 }
@@ -89,12 +129,41 @@ class MainActivity : AppCompatActivity() {
                     )
                 }
             }
-        }else{
-            startCamera()
+        } else {
+            setupCamera()
         }
     }
 
-    private fun startCamera(){
+    private fun takePhoto() {
+        val outputFileOptions = ImageCapture.OutputFileOptions.Builder(getOutputPhotoFile()).build()
+        imageCapture.takePicture(outputFileOptions, cameraExecutor,
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(error: ImageCaptureException) {
+                    Toast.makeText(this@MainActivity, "Error taking photo ${error.message}", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                    // insert your code here.
+                }
+            })
+    }
+
+    private fun getOutputPhotoFile(): File {
+        //mediaDir tiene un arreglo de directorios y toma el primero que no sea null
+        val mediaDir = externalMediaDirs.firstOrNull()?.let{
+            //Crea ese directorio como padre y como hijo el nombre de la aplicación, para que tenga
+            //un nombre correcto ese archivo se le agrega la extenxión en .jpg
+            File(it, resources.getString(R.string.app_name) + ".jpg").apply { mkdirs() }
+        }
+
+        return if (mediaDir != null && mediaDir.exists()){
+            mediaDir
+        }else{
+            filesDir
+        }
+    }
+
+    private fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
 
         cameraProviderFuture.addListener({
@@ -105,7 +174,7 @@ class MainActivity : AppCompatActivity() {
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-            cameraProvider.bindToLifecycle(this, cameraSelector, preview)
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
 
 
         }, ContextCompat.getMainExecutor(this))

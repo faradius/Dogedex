@@ -16,6 +16,7 @@ import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import com.alex.dogedex.WholeImageActivity.Companion.PHOTO_URL_KEY
 import com.alex.dogedex.api.ApiServiceInterceptor
 import com.alex.dogedex.auth.LoginActivity
 import com.alex.dogedex.databinding.ActivityMainBinding
@@ -143,9 +144,16 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    // insert your code here.
+                    val photoUri = outputFileResults.savedUri
+                    openWholeImageActivity(photoUri.toString())
                 }
             })
+    }
+
+    private fun openWholeImageActivity(photoUri:String){
+        val intent = Intent(this, WholeImageActivity::class.java)
+        intent.putExtra(PHOTO_URL_KEY, photoUri)
+        startActivity(intent)
     }
 
     private fun getOutputPhotoFile(): File {

@@ -3,7 +3,7 @@ package com.alex.dogedex.api.dto
 import com.alex.dogedex.model.Dog
 
 class DogDTOMapper {
-    private fun fromDogDTOToDogDomain(dogDTO: DogDTO): Dog {
+    fun fromDogDTOToDogDomain(dogDTO: DogDTO): Dog {
         return Dog(
             dogDTO.id,
             dogDTO.index,

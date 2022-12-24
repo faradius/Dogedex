@@ -1,28 +1,35 @@
-package com.alex.dogedex
+package com.alex.dogedex.main
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import com.alex.dogedex.WholeImageActivity.Companion.PHOTO_URL_KEY
+import com.alex.dogedex.R
+import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.api.ApiServiceInterceptor
 import com.alex.dogedex.auth.LoginActivity
 import com.alex.dogedex.databinding.ActivityMainBinding
+import com.alex.dogedex.dogdetail.DogDetailActivity
+import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
 import com.alex.dogedex.doglist.DogListActivity
+import com.alex.dogedex.machinelearning.Classifier
+import com.alex.dogedex.model.Dog
 import com.alex.dogedex.model.User
 import com.alex.dogedex.settings.SettingsActivity
+import com.alex.dogedex.utils.LABEL_PATH
+import com.alex.dogedex.utils.MODEL_PATH
+import org.tensorflow.lite.support.common.FileUtil
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -32,6 +39,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageCapture: ImageCapture
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraReady = false
+    private lateinit var classifier: Classifier
+    private val viewModel: MainViewModel by viewModels()
 
     private val requestPermissionLauncher =
         registerForActivityResult(
@@ -75,10 +84,42 @@ class MainActivity : AppCompatActivity() {
             if (isCameraReady){
                 takePhoto()
             }
+        }
 
+        viewModel.status.observe(this){ status->
+
+            when(status){
+                is ApiResponseStatus.Error -> {
+                    binding.loadingWheel.visibility = View.GONE
+                    Toast.makeText(this@MainActivity, status.messageId, Toast.LENGTH_SHORT).show()
+                }
+                is ApiResponseStatus.Loading -> binding.loadingWheel.visibility = View.VISIBLE
+                is ApiResponseStatus.Success -> binding.loadingWheel.visibility = View.GONE
+                else -> {Toast.makeText(this@MainActivity, R.string.unknown_error, Toast.LENGTH_SHORT).show()}
+            }
+        }
+
+        viewModel.dog.observe(this){ dog->
+            if (dog != null){
+                openDogDetailActivity(dog)
+            }
         }
 
         requestCameraPermission()
+    }
+
+    private fun openDogDetailActivity(dog: Dog) {
+        val intent = Intent(this, DogDetailActivity::class.java)
+        intent.putExtra(DOG_KEY, dog)
+        startActivity(intent)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        classifier = Classifier(
+            FileUtil.loadMappedFile(this@MainActivity, MODEL_PATH),
+            FileUtil.loadLabels(this@MainActivity, LABEL_PATH)
+        )
     }
 
     override fun onDestroy() {
@@ -145,15 +186,12 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     val photoUri = outputFileResults.savedUri
-                    openWholeImageActivity(photoUri.toString())
+
+                    val bitmap = BitmapFactory.decodeFile(photoUri?.path)
+                    val dogRecognition = classifier.recognizeImage(bitmap).first()
+                    viewModel.getDogByMlId(dogRecognition.id)
                 }
             })
-    }
-
-    private fun openWholeImageActivity(photoUri:String){
-        val intent = Intent(this, WholeImageActivity::class.java)
-        intent.putExtra(PHOTO_URL_KEY, photoUri)
-        startActivity(intent)
     }
 
     private fun getOutputPhotoFile(): File {
@@ -182,7 +220,15 @@ class MainActivity : AppCompatActivity() {
 
             val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
-            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+            val imageAnalysis = ImageAnalysis.Builder()
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+            imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy ->
+                val rotationDegrees = imageProxy.imageInfo.rotationDegrees
+                imageProxy.close()
+            }
+
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture, imageAnalysis)
 
 
         }, ContextCompat.getMainExecutor(this))

@@ -27,6 +27,7 @@ import com.alex.dogedex.auth.LoginActivity
 import com.alex.dogedex.databinding.ActivityMainBinding
 import com.alex.dogedex.dogdetail.DogDetailActivity
 import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
+import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.IS_RECOGNITION_KEY
 import com.alex.dogedex.doglist.DogListActivity
 import com.alex.dogedex.machinelearning.Classifier
 import com.alex.dogedex.machinelearning.DogRecognition
@@ -113,6 +114,7 @@ class MainActivity : AppCompatActivity() {
     private fun openDogDetailActivity(dog: Dog) {
         val intent = Intent(this, DogDetailActivity::class.java)
         intent.putExtra(DOG_KEY, dog)
+        intent.putExtra(IS_RECOGNITION_KEY, true)
         startActivity(intent)
     }
 

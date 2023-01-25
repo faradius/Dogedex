@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import coil.annotation.ExperimentalCoilApi
 import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.api.ApiServiceInterceptor
@@ -28,6 +29,7 @@ import com.alex.dogedex.databinding.ActivityMainBinding
 import com.alex.dogedex.dogdetail.DogDetailActivity
 import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
 import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.IS_RECOGNITION_KEY
+import com.alex.dogedex.dogdetail.DogDetailComposeActivity
 import com.alex.dogedex.doglist.DogListActivity
 import com.alex.dogedex.machinelearning.Classifier
 import com.alex.dogedex.machinelearning.DogRecognition
@@ -42,6 +44,7 @@ import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+@ExperimentalCoilApi
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var imageCapture: ImageCapture
@@ -116,9 +119,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openDogDetailActivity(dog: Dog) {
-        val intent = Intent(this, DogDetailActivity::class.java)
-        intent.putExtra(DOG_KEY, dog)
-        intent.putExtra(IS_RECOGNITION_KEY, true)
+        val intent = Intent(this, DogDetailComposeActivity::class.java)
+        intent.putExtra(DogDetailComposeActivity.DOG_KEY, dog)
+        intent.putExtra(DogDetailComposeActivity.IS_RECOGNITION_KEY, true)
         startActivity(intent)
     }
 

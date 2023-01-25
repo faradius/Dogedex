@@ -26,18 +26,13 @@ import com.alex.dogedex.model.Dog
 
 @ExperimentalCoilApi
 @Composable
-fun DogDetailScreen() {
+fun DogDetailScreen(dog: Dog) {
     Box(
-        modifier = Modifier
+        modifier = Modifier.fillMaxSize()
             .background(colorResource(id = R.color.secondary_background))
             .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
         contentAlignment = Alignment.TopCenter
     ) {
-        val dog = Dog(
-            1L, 78, "Pug", "Herding", "70", "75",
-            "", "10 - 12", "Friendly, playful",
-            "5", "6"
-        )
         DogInformation(dog)
         Image(
             modifier = Modifier
@@ -253,5 +248,10 @@ private fun DogDataColumn(
 @Preview
 @Composable
 fun DogDetailScreenPreview() {
-    DogDetailScreen()
+    val dog = Dog(
+        1L, 78, "Pug", "Herding", "70", "75",
+        "", "10 - 12", "Friendly, playful",
+        "5", "6"
+    )
+    DogDetailScreen(dog)
 }

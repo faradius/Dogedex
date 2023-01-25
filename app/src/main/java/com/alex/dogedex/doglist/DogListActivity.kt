@@ -8,14 +8,17 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.annotation.ExperimentalCoilApi
 import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityDogListBinding
 import com.alex.dogedex.dogdetail.DogDetailActivity
 import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
+import com.alex.dogedex.dogdetail.DogDetailComposeActivity
 
 private const val GRID_SPAN_COUNT = 3
 
+@ExperimentalCoilApi
 class DogListActivity : AppCompatActivity() {
 
     //El by hace funciona como un lateinit, osea que se declara y que se va usar despues
@@ -34,8 +37,8 @@ class DogListActivity : AppCompatActivity() {
         val adapter = DogAdapter()
         adapter.setOnItemClickListener {
             //Pasar el dog a DogDetailActivity
-            val intent = Intent(this, DogDetailActivity::class.java)
-            intent.putExtra(DOG_KEY, it)
+            val intent = Intent(this, DogDetailComposeActivity::class.java)
+            intent.putExtra(DogDetailComposeActivity.DOG_KEY, it)
             startActivity(intent)
         }
 

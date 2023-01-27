@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.navigation.findNavController
 import com.alex.dogedex.main.MainActivity
 import com.alex.dogedex.R
@@ -13,6 +15,8 @@ import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityLoginBinding
 import com.alex.dogedex.model.User
 
+@ExperimentalFoundationApi
+@ExperimentalMaterialApi
 class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, SignUpFragment.SignUpFragmentActions {
 
     private val viewModel:AuthViewModel by viewModels()

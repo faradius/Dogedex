@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.annotation.ExperimentalCoilApi
@@ -20,8 +22,8 @@ import com.alex.dogedex.dogdetail.DogDetailComposeActivity
 import com.alex.dogedex.dogdetail.ui.theme.DogedexTheme
 import com.alex.dogedex.model.Dog
 
-private const val GRID_SPAN_COUNT = 3
-
+@ExperimentalMaterialApi
+@ExperimentalFoundationApi
 @ExperimentalCoilApi
 class DogListActivity : ComponentActivity() {
 

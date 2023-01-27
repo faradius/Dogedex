@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -22,13 +23,19 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.alex.dogedex.R
+import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.model.Dog
 
 @ExperimentalCoilApi
 @Composable
-fun DogDetailScreen(dog: Dog) {
+fun DogDetailScreen(
+    dog: Dog,
+    status: ApiResponseStatus<Any>? = null,
+    onButtonClicked: () -> Unit
+) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(colorResource(id = R.color.secondary_background))
             .padding(start = 8.dp, end = 8.dp, bottom = 16.dp),
         contentAlignment = Alignment.TopCenter
@@ -44,10 +51,28 @@ fun DogDetailScreen(dog: Dog) {
 
         FloatingActionButton(
             modifier = Modifier.align(alignment = Alignment.BottomCenter),
-            onClick = {}
+            onClick = { onButtonClicked()}
         ) {
             Icon(imageVector = Icons.Filled.Check, contentDescription = "")
         }
+
+        if (status is ApiResponseStatus.Loading){
+            LoadingWheel()
+        }
+
+    }
+}
+
+@Composable
+fun LoadingWheel(){
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        CircularProgressIndicator(
+            color = Color.Red
+        )
     }
 }
 
@@ -167,7 +192,10 @@ fun LifeIcon() {
     ) {
         Surface(shape = CircleShape,
         color = colorResource(id = R.color.color_primary)) {
-            Icon(painter = painterResource(id = R.drawable.ic_hearth_white), contentDescription = null,
+            Icon(painter = painterResource(
+                id = R.drawable.ic_hearth_white),
+                contentDescription = null,
+                tint = Color.White,
             modifier = Modifier
                 .width(24.dp)
                 .height(24.dp)
@@ -253,5 +281,5 @@ fun DogDetailScreenPreview() {
         "", "10 - 12", "Friendly, playful",
         "5", "6"
     )
-    DogDetailScreen(dog)
+    DogDetailScreen(dog, onButtonClicked = {})
 }

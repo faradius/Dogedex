@@ -12,8 +12,8 @@ import coil.annotation.ExperimentalCoilApi
 import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityDogListBinding
-import com.alex.dogedex.dogdetail.DogDetailActivity
-import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
+//import com.alex.dogedex.dogdetail.DogDetailActivity
+//import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
 import com.alex.dogedex.dogdetail.DogDetailComposeActivity
 
 private const val GRID_SPAN_COUNT = 3

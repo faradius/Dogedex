@@ -26,9 +26,9 @@ import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.api.ApiServiceInterceptor
 import com.alex.dogedex.auth.LoginActivity
 import com.alex.dogedex.databinding.ActivityMainBinding
-import com.alex.dogedex.dogdetail.DogDetailActivity
-import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
-import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.IS_RECOGNITION_KEY
+//import com.alex.dogedex.dogdetail.DogDetailActivity
+//import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.DOG_KEY
+//import com.alex.dogedex.dogdetail.DogDetailActivity.Companion.IS_RECOGNITION_KEY
 import com.alex.dogedex.dogdetail.DogDetailComposeActivity
 import com.alex.dogedex.doglist.DogListActivity
 import com.alex.dogedex.machinelearning.Classifier

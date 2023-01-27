@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -13,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import coil.annotation.ExperimentalCoilApi
 import com.alex.dogedex.R
+import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.dogdetail.ui.theme.DogedexTheme
 import com.alex.dogedex.model.Dog
 
@@ -23,6 +25,8 @@ class DogDetailComposeActivity : ComponentActivity() {
         const val DOG_KEY = "dog"
         const val IS_RECOGNITION_KEY = "is_recognition"
     }
+
+    private val viewModel: DogDetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,9 +39,28 @@ class DogDetailComposeActivity : ComponentActivity() {
             return
         }
         setContent {
-            DogedexTheme {
-               DogDetailScreen(dog = dog)
+            val status = viewModel.status
+            if (status.value is ApiResponseStatus.Success){
+                finish()
+            }else{
+                DogedexTheme {
+                    DogDetailScreen(
+                        dog = dog,
+                        status = status.value,
+                        onButtonClicked = {
+                            onButtonClicked(dog.id, isRecognition)
+                        }
+                    )
+                }
             }
+        }
+    }
+
+    private fun onButtonClicked(dogId: Long, isRecognition: Boolean){
+        if (isRecognition){
+            viewModel.addDogToUser(dogId)
+        }else{
+            finish()
         }
     }
 }

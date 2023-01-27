@@ -49,11 +49,17 @@ class DogDetailComposeActivity : ComponentActivity() {
                         status = status.value,
                         onButtonClicked = {
                             onButtonClicked(dog.id, isRecognition)
-                        }
+                        },
+                        //Si no necesitamos argumentos se puede declarar asi
+                        onDialogErrorDismiss = ::resetApiResponseStatus
                     )
                 }
             }
         }
+    }
+
+    private fun resetApiResponseStatus() {
+        viewModel.resetApiResponseStatus()
     }
 
     private fun onButtonClicked(dogId: Long, isRecognition: Boolean){

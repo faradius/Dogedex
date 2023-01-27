@@ -31,7 +31,8 @@ import com.alex.dogedex.model.Dog
 fun DogDetailScreen(
     dog: Dog,
     status: ApiResponseStatus<Any>? = null,
-    onButtonClicked: () -> Unit
+    onButtonClicked: () -> Unit,
+    onDialogErrorDismiss: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -58,6 +59,8 @@ fun DogDetailScreen(
 
         if (status is ApiResponseStatus.Loading){
             LoadingWheel()
+        } else if (status is ApiResponseStatus.Error){
+            ErrorDialog(status, onDialogErrorDismiss)
         }
 
     }
@@ -74,6 +77,26 @@ fun LoadingWheel(){
             color = Color.Red
         )
     }
+}
+
+@Composable
+fun ErrorDialog(
+    status: ApiResponseStatus.Error<Any>,
+    onDialogDismiss: () -> Unit
+){
+    AlertDialog(onDismissRequest = { },
+        title = {
+            Text(stringResource(R.string.error_dialog_title))
+        },
+        text = {
+            Text(stringResource(id = status.messageId))
+        },
+        confirmButton = {
+            Button(onClick = { onDialogDismiss() }) {
+                Text(stringResource(R.string.try_again))
+            }
+        }
+    )
 }
 
 @Composable
@@ -281,5 +304,5 @@ fun DogDetailScreenPreview() {
         "", "10 - 12", "Friendly, playful",
         "5", "6"
     )
-    DogDetailScreen(dog, onButtonClicked = {})
+    DogDetailScreen(dog, onButtonClicked = {}, onDialogErrorDismiss = {})
 }

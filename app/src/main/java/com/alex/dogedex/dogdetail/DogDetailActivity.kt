@@ -11,7 +11,7 @@ import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityDogDetailBinding
 
-//class DogDetailActivity : AppCompatActivity() {
+class DogDetailActivity : AppCompatActivity() {}
 //
 //    companion object{
 //        const val DOG_KEY = "dog"

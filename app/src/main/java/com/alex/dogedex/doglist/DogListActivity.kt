@@ -35,7 +35,10 @@ class DogListActivity : ComponentActivity() {
         setContent{
             DogedexTheme {
                 val dogList = viewModel.dogList
-                DogListScreen(dogList = dogList.value, onDogClicked = ::openDogDetailActivity) //se puede simplificar porque recibe en ambos lados un dog
+                DogListScreen(
+                    onNavigationIconClick = ::onNavigationIconClick,
+                    dogList = dogList.value,
+                    onDogClicked = ::openDogDetailActivity) //se puede simplificar porque recibe en ambos lados un dog
             }
         }
 
@@ -81,6 +84,10 @@ class DogListActivity : ComponentActivity() {
         val intent = Intent(this, DogDetailComposeActivity::class.java)
         intent.putExtra(DogDetailComposeActivity.DOG_KEY, dog)
         startActivity(intent)
+    }
+
+    private fun onNavigationIconClick(){
+        finish()
     }
 
 }

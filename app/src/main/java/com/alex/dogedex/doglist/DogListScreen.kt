@@ -30,6 +30,9 @@ import androidx.compose.ui.unit.sp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.alex.dogedex.R
+import com.alex.dogedex.api.ApiResponseStatus
+import com.alex.dogedex.composables.ErrorDialog
+import com.alex.dogedex.composables.LoadingWheel
 import com.alex.dogedex.model.Dog
 
 private const val GRID_SPAN_COUNT = 3
@@ -41,7 +44,9 @@ private const val GRID_SPAN_COUNT = 3
 fun DogListScreen(
     onNavigationIconClick: () -> Unit,
     dogList: List<Dog>,
-    onDogClicked: (Dog) -> Unit
+    onDogClicked: (Dog) -> Unit,
+    status: ApiResponseStatus<Any>? = null,
+    onDialogErrorDismiss: () -> Unit
 ) {
     Scaffold (
         topBar = { DogListScreenTopBar(onNavigationIconClick) }
@@ -55,6 +60,12 @@ fun DogListScreen(
                 }
             }
         )
+    }
+
+    if (status is ApiResponseStatus.Loading){
+        LoadingWheel()
+    } else if (status is ApiResponseStatus.Error){
+        ErrorDialog(status.messageId, onDialogErrorDismiss)
     }
 }
 

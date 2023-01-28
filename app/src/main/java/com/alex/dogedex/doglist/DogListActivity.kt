@@ -33,12 +33,16 @@ class DogListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
+            val status = viewModel.status
             DogedexTheme {
                 val dogList = viewModel.dogList
                 DogListScreen(
                     onNavigationIconClick = ::onNavigationIconClick,
                     dogList = dogList.value,
-                    onDogClicked = ::openDogDetailActivity) //se puede simplificar porque recibe en ambos lados un dog
+                    onDogClicked = ::openDogDetailActivity, //se puede simplificar porque recibe en ambos lados un dog
+                status = status.value,
+                    onDialogErrorDismiss = ::resetApiResponseStatus
+                )
             }
         }
 
@@ -88,6 +92,10 @@ class DogListActivity : ComponentActivity() {
 
     private fun onNavigationIconClick(){
         finish()
+    }
+
+    private fun resetApiResponseStatus() {
+        viewModel.resetApiResponseStatus()
     }
 
 }

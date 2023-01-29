@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -13,17 +15,40 @@ import com.alex.dogedex.main.MainActivity
 import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityLoginBinding
+import com.alex.dogedex.dogdetail.ui.theme.DogedexTheme
 import com.alex.dogedex.model.User
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
-class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, SignUpFragment.SignUpFragmentActions {
+class LoginActivity : ComponentActivity() { //LoginFragment.LoginFragmentActions, SignUpFragment.SignUpFragmentActions
 
     private val viewModel:AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding = ActivityLoginBinding.inflate(layoutInflater)
+        
+        setContent{
+            val user = viewModel.user
+
+            val userValue = user.value
+            if (userValue != null){
+                User.setLoggedInUser(this, userValue)
+                startMainActivity()
+            }
+
+            val status = viewModel.status
+
+            DogedexTheme {
+                AuthScreen(
+                    status = status.value,
+                    onLoginButtonClick = { email, password -> viewModel.login(email,password) },
+                    onSignUpButtonClick = { email, password, passwordConfirmation -> viewModel.signUp(email, password, passwordConfirmation) },
+                    onDialogErrorDismiss = ::resetApiResponseStatus
+                )
+            }
+        }
+        
+        /*val binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         viewModel.status.observe(this){ status ->
@@ -42,7 +67,11 @@ class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, S
                 User.setLoggedInUser(this, user)
                 startMainActivity()
             }
-        }
+        } */
+    }
+
+    private fun resetApiResponseStatus() {
+        viewModel.resetApiResponseStatus()
     }
 
     private fun startMainActivity(){
@@ -50,28 +79,28 @@ class LoginActivity : AppCompatActivity(), LoginFragment.LoginFragmentActions, S
         finish()
     }
 
-    private fun showErrorDialog(messageId: Int){
-        AlertDialog.Builder(this)
-            .setTitle(R.string.there_was_an_error)
-            .setMessage(messageId)
-            .setPositiveButton(android.R.string.ok){_,_-> /** Dismiss dialog **/}
-            .create()
-            .show()
-    }
-
-    override fun onRegisterButtonClick() {
-        findNavController(R.id.nav_host_fragment).navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
-    }
-
-    override fun onLoginFieldsValidated(email: String, password: String) {
-        viewModel.login(email,password)
-    }
-
-    override fun onSignUpFieldsValidated(
-        email: String,
-        password: String,
-        passwordConfirmation: String
-    ) {
-        viewModel.signUp(email, password, passwordConfirmation)
-    }
+//    private fun showErrorDialog(messageId: Int){
+//        AlertDialog.Builder(this)
+//            .setTitle(R.string.there_was_an_error)
+//            .setMessage(messageId)
+//            .setPositiveButton(android.R.string.ok){_,_-> /** Dismiss dialog **/}
+//            .create()
+//            .show()
+//    }
+//
+//    override fun onRegisterButtonClick() {
+//        findNavController(R.id.nav_host_fragment).navigate(LoginFragmentDirections.actionLoginFragmentToSignUpFragment())
+//    }
+//
+//    override fun onLoginFieldsValidated(email: String, password: String) {
+//        viewModel.login(email,password)
+//    }
+//
+//    override fun onSignUpFieldsValidated(
+//        email: String,
+//        password: String,
+//        passwordConfirmation: String
+//    ) {
+//        viewModel.signUp(email, password, passwordConfirmation)
+//    }
 }

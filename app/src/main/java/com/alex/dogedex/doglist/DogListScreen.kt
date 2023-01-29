@@ -31,6 +31,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
+import com.alex.dogedex.composables.BackNavigationIcon
 import com.alex.dogedex.composables.ErrorDialog
 import com.alex.dogedex.composables.LoadingWheel
 import com.alex.dogedex.model.Dog
@@ -79,15 +80,6 @@ fun DogListScreenTopBar(onClick: () -> Unit){
     )
 }
 
-@Composable
-fun BackNavigationIcon(
-    onClick: () -> Unit
-){
-    IconButton(onClick = onClick) {
-        Icon(painter = rememberVectorPainter(image = Icons.Sharp.ArrowBack),
-            contentDescription = null)
-    }
-}
 
 @ExperimentalCoilApi
 @ExperimentalMaterialApi

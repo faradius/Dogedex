@@ -21,27 +21,29 @@ import com.alex.dogedex.databinding.ActivityDogListBinding
 import com.alex.dogedex.dogdetail.DogDetailComposeActivity
 import com.alex.dogedex.dogdetail.ui.theme.DogedexTheme
 import com.alex.dogedex.model.Dog
+import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @ExperimentalCoilApi
+@AndroidEntryPoint
 class DogListActivity : ComponentActivity() {
 
     //El by hace funciona como un lateinit, osea que se declara y que se va usar despues
-    private val viewModel:DogListViewModel by viewModels()
+    //private val viewModel:DogListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent{
-            val status = viewModel.status
+//            val status = viewModel.status
             DogedexTheme {
-                val dogList = viewModel.dogList
+//                val dogList = viewModel.dogList
                 DogListScreen(
                     onNavigationIconClick = ::onNavigationIconClick,
-                    dogList = dogList.value,
+//                    dogList = dogList.value,
                     onDogClicked = ::openDogDetailActivity, //se puede simplificar porque recibe en ambos lados un dog
-                status = status.value,
-                    onDialogErrorDismiss = ::resetApiResponseStatus
+//                status = status.value,
+//                    onDialogErrorDismiss = ::resetApiResponseStatus
                 )
             }
         }
@@ -94,8 +96,8 @@ class DogListActivity : ComponentActivity() {
         finish()
     }
 
-    private fun resetApiResponseStatus() {
-        viewModel.resetApiResponseStatus()
-    }
+//    private fun resetApiResponseStatus() {
+//        viewModel.resetApiResponseStatus()
+//    }
 
 }

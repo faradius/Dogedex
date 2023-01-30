@@ -12,14 +12,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DogListViewModel @Inject constructor(): ViewModel() {
+class DogListViewModel @Inject constructor(private val dogRepository: DogRepository): ViewModel() {
 
     var dogList = mutableStateOf<List<Dog>>(listOf())
     private set
 
     var status = mutableStateOf<ApiResponseStatus<Any>?>(null)
 
-    private val dogRepository = DogRepository()
+//    private val dogRepository = DogRepository()
 
     init {
         getDogCollection()

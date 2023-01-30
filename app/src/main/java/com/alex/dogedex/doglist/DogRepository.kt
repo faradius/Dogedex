@@ -3,7 +3,7 @@ package com.alex.dogedex.doglist
 import com.alex.dogedex.R
 import com.alex.dogedex.model.Dog
 import com.alex.dogedex.api.ApiResponseStatus
-import com.alex.dogedex.api.DogsApi.retrofitService
+import com.alex.dogedex.api.ApiService
 import com.alex.dogedex.api.dto.AddDogToUserDTO
 import com.alex.dogedex.api.dto.DogDTOMapper
 import com.alex.dogedex.api.makeNetworkCall
@@ -17,7 +17,9 @@ interface DogTasks{
     suspend fun addDogToUser(dogId: Long): ApiResponseStatus<Any>
     suspend fun getDogByMlId(mlDogId: String): ApiResponseStatus<Dog>
 }
-class DogRepository @Inject constructor() : DogTasks{
+class DogRepository @Inject constructor(
+    private val apiService: ApiService
+) : DogTasks{
     override suspend fun getDogCollection(): ApiResponseStatus<List<Dog>> {
         return withContext(Dispatchers.IO) {
             val allDogsListDeferred = async { downloadDogs() }
@@ -60,7 +62,7 @@ class DogRepository @Inject constructor() : DogTasks{
     }
 
     private suspend fun downloadDogs(): ApiResponseStatus<List<Dog>> = makeNetworkCall {
-        val dogListApiResponse = retrofitService.getAllDogs()
+        val dogListApiResponse = apiService.getAllDogs()
         val dogDtoList = dogListApiResponse.data.dogs
         val dogDTOMapper = DogDTOMapper()
         //Esto es el resultato que contendrá call
@@ -68,7 +70,7 @@ class DogRepository @Inject constructor() : DogTasks{
     }
 
     private suspend fun getUserDogs(): ApiResponseStatus<List<Dog>> = makeNetworkCall {
-        val dogListApiResponse = retrofitService.getUserDogs()
+        val dogListApiResponse = apiService.getUserDogs()
         val dogDtoList = dogListApiResponse.data.dogs
         val dogDTOMapper = DogDTOMapper()
         //Esto es el resultato que contendrá call
@@ -77,7 +79,7 @@ class DogRepository @Inject constructor() : DogTasks{
 
     override suspend fun addDogToUser(dogId: Long): ApiResponseStatus<Any> = makeNetworkCall {
         val addDogToUserDTO = AddDogToUserDTO(dogId)
-        val defaultResponse = retrofitService.addDogToUser(addDogToUserDTO)
+        val defaultResponse = apiService.addDogToUser(addDogToUserDTO)
 
         if (!defaultResponse.isSuccess) {
             throw Exception(defaultResponse.message)
@@ -85,7 +87,7 @@ class DogRepository @Inject constructor() : DogTasks{
     }
 
     override suspend fun getDogByMlId(mlDogId: String): ApiResponseStatus<Dog> = makeNetworkCall {
-        val response = retrofitService.getDogByMlId(mlDogId)
+        val response = apiService.getDogByMlId(mlDogId)
 
         if (!response.isSuccess){
             throw Exception(response.message)

@@ -27,12 +27,19 @@ import com.alex.dogedex.composables.AuthField
 @Composable
 fun LoginScreen(
     onLoginButtonClick: (String, String) -> Unit,
-    onRegisterButtonClick: () -> Unit
+    onRegisterButtonClick: () -> Unit,
+    authViewModel: AuthViewModel
 ) {
     Scaffold(topBar = { LoginScreenToolbar() }) {
         Content(
             onLoginButtonClick = onLoginButtonClick,
-            onRegisterButtonClick = onRegisterButtonClick
+            //onRegisterButtonClick = onRegisterButtonClick
+            onRegisterButtonClick = {
+                onRegisterButtonClick()
+                authViewModel.resetErrors()
+            },
+            resetFieldErrors = { authViewModel.resetErrors() },
+            authViewModel = authViewModel
         )
     }
 }
@@ -40,7 +47,9 @@ fun LoginScreen(
 @Composable
 private fun Content(
     onLoginButtonClick: (String, String) -> Unit,
-    onRegisterButtonClick: () -> Unit
+    onRegisterButtonClick: () -> Unit,
+    resetFieldErrors: () -> Unit,
+    authViewModel: AuthViewModel
 ) {
     val email = remember { mutableStateOf("") }
     val password = remember { mutableStateOf("") }
@@ -59,7 +68,11 @@ private fun Content(
             label = stringResource(id = R.string.email),
             modifier = Modifier.fillMaxWidth(),
             email = email.value,
-            onTextChanged = { email.value = it }
+            onTextChanged = {
+                email.value = it
+                resetFieldErrors()
+            },
+            errorMessageId = authViewModel.emailError.value
         )
         AuthField(
             label = stringResource(id = R.string.password),
@@ -67,16 +80,21 @@ private fun Content(
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             email = password.value,
-            onTextChanged = { password.value = it },
-            visualTransformation = PasswordVisualTransformation()
+            onTextChanged = {
+                password.value = it
+                resetFieldErrors()
+            },
+            visualTransformation = PasswordVisualTransformation(),
+            errorMessageId = authViewModel.passwordError.value
         )
 
         Button(modifier = Modifier
             .fillMaxWidth()
             .padding(top = 16.dp),
-            onClick = { onLoginButtonClick(email.value,password.value) }
+            onClick = { onLoginButtonClick(email.value, password.value) }
         ) {
-            Text(stringResource(id = R.string.login),
+            Text(
+                stringResource(id = R.string.login),
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Medium
             )
@@ -91,10 +109,11 @@ private fun Content(
             text = stringResource(R.string.do_not_have_an_account)
         )
 
-        Text(modifier = Modifier
-            .clickable(enabled = true, onClick = { onRegisterButtonClick() })
-            .fillMaxWidth()
-            .padding(16.dp),
+        Text(
+            modifier = Modifier
+                .clickable(enabled = true, onClick = { onRegisterButtonClick() })
+                .fillMaxWidth()
+                .padding(16.dp),
             text = stringResource(R.string.register),
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium

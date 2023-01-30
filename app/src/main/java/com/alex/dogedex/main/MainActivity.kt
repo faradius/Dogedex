@@ -40,6 +40,7 @@ import com.alex.dogedex.model.User
 import com.alex.dogedex.settings.SettingsActivity
 import com.alex.dogedex.utils.LABEL_PATH
 import com.alex.dogedex.utils.MODEL_PATH
+import dagger.hilt.android.AndroidEntryPoint
 import org.tensorflow.lite.support.common.FileUtil
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -49,6 +50,7 @@ import java.util.concurrent.Executors
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
 @ExperimentalCoilApi
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var imageCapture: ImageCapture

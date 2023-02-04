@@ -56,7 +56,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var imageCapture: ImageCapture
     private lateinit var cameraExecutor: ExecutorService
     private var isCameraReady = false
-    private lateinit var classifier: Classifier
     private val viewModel: MainViewModel by viewModels()
 
     private val requestPermissionLauncher =
@@ -129,15 +128,6 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra(DogDetailComposeActivity.DOG_KEY, dog)
         intent.putExtra(DogDetailComposeActivity.IS_RECOGNITION_KEY, true)
         startActivity(intent)
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        viewModel.setupClassifier(
-            FileUtil.loadMappedFile(this@MainActivity, MODEL_PATH),
-            FileUtil.loadLabels(this@MainActivity, LABEL_PATH)
-        )
     }
 
     override fun onDestroy() {

@@ -7,6 +7,7 @@ import com.alex.dogedex.api.ApiService
 import com.alex.dogedex.api.dto.AddDogToUserDTO
 import com.alex.dogedex.api.dto.DogDTOMapper
 import com.alex.dogedex.api.makeNetworkCall
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -18,10 +19,11 @@ interface DogTasks{
     suspend fun getDogByMlId(mlDogId: String): ApiResponseStatus<Dog>
 }
 class DogRepository @Inject constructor(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val dispatcher: CoroutineDispatcher
 ) : DogTasks{
     override suspend fun getDogCollection(): ApiResponseStatus<List<Dog>> {
-        return withContext(Dispatchers.IO) {
+        return withContext(dispatcher) {
             val allDogsListDeferred = async { downloadDogs() }
             val userDogsListDeferred = async { getUserDogs() }
 

@@ -17,9 +17,11 @@ import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.databinding.ActivityLoginBinding
 import com.alex.dogedex.dogdetail.ui.theme.DogedexTheme
 import com.alex.dogedex.model.User
+import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalFoundationApi
 @ExperimentalMaterialApi
+@AndroidEntryPoint
 class LoginActivity : ComponentActivity() { //LoginFragment.LoginFragmentActions, SignUpFragment.SignUpFragmentActions
 
     private val viewModel:AuthViewModel by viewModels()

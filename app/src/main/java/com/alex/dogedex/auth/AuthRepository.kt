@@ -2,7 +2,6 @@ package com.alex.dogedex.auth
 
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.api.ApiService
-import com.alex.dogedex.api.DogsApi
 import com.alex.dogedex.api.dto.LoginDTO
 import com.alex.dogedex.api.dto.SignUpDTO
 import com.alex.dogedex.api.dto.UserDTOMapper

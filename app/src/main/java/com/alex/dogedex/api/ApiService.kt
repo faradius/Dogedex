@@ -18,16 +18,16 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-private val okHttpClient = OkHttpClient
-    .Builder()
-    .addInterceptor(ApiServiceInterceptor)
-    .build()
+//private val okHttpClient = OkHttpClient
+//    .Builder()
+//    .addInterceptor(ApiServiceInterceptor)
+//    .build()
 
-private val retrofit = Retrofit.Builder()
-    .client(okHttpClient)
-    .baseUrl(BASE_URL)
-    .addConverterFactory(MoshiConverterFactory.create())
-    .build()
+//private val retrofit = Retrofit.Builder()
+//    .client(okHttpClient)
+//    .baseUrl(BASE_URL)
+//    .addConverterFactory(MoshiConverterFactory.create())
+//    .build()
 
 interface ApiService{
     @GET(GET_ALL_DOGS_URL)
@@ -52,8 +52,8 @@ interface ApiService{
     suspend fun getDogByMlId(@Query("ml_id") mlId: String): DogApiResponse
 }
 
-object DogsApi{
-    val retrofitService: ApiService by lazy {
-        retrofit.create(ApiService::class.java)
-    }
-}
+//object DogsApi{
+//    val retrofitService: ApiService by lazy {
+//        retrofit.create(ApiService::class.java)
+//    }
+//}

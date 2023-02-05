@@ -1,4 +1,4 @@
-package com.alex.dogedex
+package com.alex.dogedex.viewmodel
 
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.doglist.DogListViewModel

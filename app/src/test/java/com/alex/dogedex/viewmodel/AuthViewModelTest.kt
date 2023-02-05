@@ -1,5 +1,6 @@
-package com.alex.dogedex
+package com.alex.dogedex.viewmodel
 
+import com.alex.dogedex.R
 import com.alex.dogedex.api.ApiResponseStatus
 import com.alex.dogedex.auth.AuthTasks
 import com.alex.dogedex.auth.AuthViewModel

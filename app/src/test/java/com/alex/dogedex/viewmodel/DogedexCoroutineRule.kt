@@ -1,4 +1,4 @@
-package com.alex.dogedex
+package com.alex.dogedex.viewmodel
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
